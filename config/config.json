@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "novel-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/novel/NovelWebPart.js",
+          "manifest": "./src/webparts/novel/NovelWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "NovelWebPartStrings": "lib/webparts/novel/loc/{locale}.js"
+  }
+}

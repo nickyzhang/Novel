@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "version": "1.15.2",
+    "libraryName": "novel",
+    "libraryId": "dd513901-ec47-4cff-affc-3004ad98763e",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "Novel",
+    "solutionShortDescription": "Novel description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
