@@ -32,6 +32,12 @@
         "id": "e15a37eb-fe78-466c-9813-4b8c09dda9e9",
         "version": "1.0.0.0"
       }
+    ],
+    "webApiPermissionRequests": [
+      {
+        "resource": "kupotech",
+        "scope": "user_impersonation"
+      }
     ]
   },
   "paths": {

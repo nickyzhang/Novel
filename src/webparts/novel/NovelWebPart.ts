@@ -10,7 +10,9 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 import * as strings from 'NovelWebPartStrings';
 import Novel from './components/Novel';
-import { INovelProps } from './components/INovelProps';
+import { IBpmTodoApply, INovelProps } from './components/INovelProps';
+
+import { AadHttpClient, HttpClientResponse,IHttpClientOptions } from '@microsoft/sp-http';
 
 export interface INovelWebPartProps {
   description: string;
@@ -20,26 +22,58 @@ export default class NovelWebPart extends BaseClientSideWebPart<INovelWebPartPro
 
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
+  private aadHttpClient: AadHttpClient;
+
 
   public render(): void {
-    const element: React.ReactElement<INovelProps> = React.createElement(
-      Novel,
-      {
-        description: this.properties.description,
-        isDarkTheme: this._isDarkTheme,
-        environmentMessage: this._environmentMessage,
-        hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
-      }
-    );
-
-    ReactDom.render(element, this.domElement);
+    console.log("Current User Email => "+ this.context.pageContext.user.email);
+    const getBpmTodoListRequest = {"email":this.context.pageContext.user.email}
+    
+    const options: IHttpClientOptions = { 
+      headers: new Headers({
+          'Accept':'application/json',
+        }
+      ),
+      body: JSON.stringify(getBpmTodoListRequest)
+    };
+    this.aadHttpClient.post('https://kupotech.mynatapp.cc/page/api/getBpmTodoList',AadHttpClient.configurations.v1,options)
+    // this.aadHttpClient.get('https://kupotech.azurewebsites.net/page/api/getBpmTodoList',AadHttpClient.configurations.v1)
+      .then((response: HttpClientResponse):Promise<any> => {
+        return response.json();
+      })
+      .then((novels:any):void => {
+        const element: React.ReactElement<INovelProps> = React.createElement(
+          Novel,
+          {
+            description: this.properties.description,
+            isDarkTheme: this._isDarkTheme,
+            environmentMessage: this._environmentMessage,
+            hasTeamsContext: !!this.context.sdks.microsoftTeams,
+            userDisplayName: this.context.pageContext.user.displayName,
+            datalist:novels
+          }
+        );
+    
+        ReactDom.render(element, this.domElement);
+      },(err:any):void => {
+          console.error("Fail to get bpm todo list: ",err);
+      });
+    
+    
   }
 
   protected onInit(): Promise<void> {
     this._environmentMessage = this._getEnvironmentMessage();
 
-    return super.onInit();
+    return new Promise<void>((resolve: () => void, reject: (error: any) => void): void => {
+      this.context.aadHttpClientFactory
+        // .getClient('https://kupotech.azurewebsites.net')
+        .getClient('1e247003-d377-4eb8-a8ea-d0db8d4ad962')
+        .then((client: AadHttpClient): void => {
+          this.aadHttpClient = client;
+          resolve();
+        }, err => reject(err));
+    });
   }
 
   private _getEnvironmentMessage(): string {
